@@ -26,18 +26,19 @@ RUN apt-get update && \
 RUN useradd --create-home --shell /bin/bash containeruser
 
 USER containeruser
-WORKDIR /home/containeruser
 ENV CONDA_ENV=lightning
+ENV WORKDIR=/home/containeruser
+WORKDIR $WORKDIR
 
 # install conda and python
 RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh  && \
     chmod +x ~/miniconda.sh && \
-    ~/miniconda.sh -b -p /home/containeruser/miniconda && \
+    ~/miniconda.sh -b -p ${WORKDIR}/miniconda && \
     rm ~/miniconda.sh
 
 # add conda to path
-ENV PATH="/home/containeruser/miniconda/bin:$PATH"
-ENV LD_LIBRARY_PATH="/home/containeruser/miniconda/lib:$LD_LIBRARY_PATH"
+ENV PATH="${WORKDIR}/miniconda/bin:$PATH"
+ENV LD_LIBRARY_PATH="${WORKDIR}/miniconda/lib:$LD_LIBRARY_PATH"
 ENV CUDA_TOOLKIT_ROOT_DIR="/usr/local/cuda"
 
 COPY environment.yml environment.yml
@@ -45,16 +46,15 @@ COPY environment.yml environment.yml
 # conda init
 RUN conda create -y --name $CONDA_ENV python=$PYTHON_VERSION && \
     conda init bash && \
-    conda install -y python=$PYTHON_VERSION && \
-    conda config --add channels pytorch && \
-    conda install torch=$PYTORCH_VERSION && \
+    # conda install -y python=$PYTHON_VERSION && \
+    conda install pytorch=$PYTORCH_VERSION --channel=pytorch && \
     conda env update --file environment.yml && \
 
 # Disable cache
-    pip config set global.cache-dir false && \
-    pip install "pip>20.1" -U
+    conda install "pip>20.1" -U && \
+    pip config set global.cache-dir false
 
-ENV LD_LIBRARY_PATH="/home/containeruser/miniconda/envs/$CONDA_ENV/lib:$LD_LIBRARY_PATH"
+ENV LD_LIBRARY_PATH="${WORKDIR}/miniconda/envs/${CONDA_ENV}/lib:$LD_LIBRARY_PATH"
 # if you want this environment to be the default one, uncomment the following line:
 ENV CONDA_DEFAULT_ENV=${CONDA_ENV}
 
