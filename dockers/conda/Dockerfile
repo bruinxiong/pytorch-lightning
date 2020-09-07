@@ -1,5 +1,5 @@
 ARG CUDA_VERSION=10.1
-FROM nvidia/cuda:${CUDA_VERSION}-base
+FROM nvidia/cuda:${CUDA_VERSION}-devel
 
 # install versions
 ARG PYTHON_VERSION=3.7
