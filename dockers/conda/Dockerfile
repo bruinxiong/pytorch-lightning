@@ -51,7 +51,7 @@ RUN conda create -y --name $CONDA_ENV python=$PYTHON_VERSION && \
     conda env update --file environment.yml && \
 
 # Disable cache
-    conda install "pip>20.1" -U && \
+    conda install "pip>20.1" && \
     pip config set global.cache-dir false
 
 ENV LD_LIBRARY_PATH="${WORKDIR}/miniconda/envs/${CONDA_ENV}/lib:$LD_LIBRARY_PATH"
