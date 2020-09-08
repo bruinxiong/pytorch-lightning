@@ -61,15 +61,13 @@ ENV LD_LIBRARY_PATH="/root/miniconda3/envs/$CONDA_ENV/lib:$LD_LIBRARY_PATH"
 # if you want this environment to be the default one, uncomment the following line:
 ENV CONDA_DEFAULT_ENV=${CONDA_ENV}
 
+# Get package
+COPY ../pytorch-lightning pytorch-lightning
+
 # Install pytorch-lightning dependencies.
 RUN \
-# Get package
-    wget https://github.com/PyTorchLightning/pytorch-lightning/archive/master.zip --progress=bar:force:noscroll && \
-    unzip -q master.zip && \
-    rm master.zip && \
-
 # Install PL dependencies
-    cd pytorch-lightning-master && \
+    cd pytorch-lightning && \
     # drop Torch
     python -c "fname = \"./requirements/base.txt\" ; lines = [line for line in open(fname).readlines() if not line.startswith(\"torch\")] ; open(fname, \"w\").writelines(lines)" && \
     pip install --requirement ./requirements/base.txt && \
@@ -80,7 +78,7 @@ RUN \
     python -c "fname = \"./requirements/examples.txt\" ; lines = [line for line in open(fname).readlines() if not line.startswith(\"torchvision\")] ; open(fname, \"w\").writelines(lines)" && \
     pip install --requirement ./requirements/examples.txt && \
     cd .. && \
-    rm -rf pytorch-lightning-master && \
+    rm -rf pytorch-lightning && \
     rm -rf /root/.cache
 
 RUN pip --version && \

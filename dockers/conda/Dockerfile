@@ -4,7 +4,7 @@ FROM nvidia/cuda:${CUDA_VERSION}-devel
 # install versions
 ARG PYTHON_VERSION=3.7
 ARG PYTORCH_VERSION=1.4
-ARG LIGHTNING_VERSION=master
+ARG LIGHTNING_VERSION=""
 # NOTE new Conda does not forward the exit status... https://github.com/conda/conda/issues/8385
 ARG CONDA_VERSION=4.7.12
 
@@ -58,10 +58,18 @@ ENV LD_LIBRARY_PATH="${WORKDIR}/miniconda/envs/${CONDA_ENV}/lib:$LD_LIBRARY_PATH
 # if you want this environment to be the default one, uncomment the following line:
 ENV CONDA_DEFAULT_ENV=${CONDA_ENV}
 
+# Get package
+COPY ../pytorch-lightning pytorch-lightning
+
 # install dependencies
-RUN git clone https://github.com/PyTorchLightning/pytorch-lightning.git --single-branch --branch $LIGHTNING_VERSION && \
-    pip install ./pytorch-lightning && \
-    rm -rf pytorch-lightning
+RUN \
+    if [ -z $LIGHTNING_VERSION ] ; then \
+        pip install ./pytorch-lightning ; \
+        rm -rf pytorch-lightning ; \
+    else \
+        rm -rf pytorch-lightning ; \
+        pip install git+https://github.com/PyTorchLightning/pytorch-lightning.git@${LIGHTNING_VERSION} ; \
+    fi
 
 RUN python --version && \
     pip --version && \
