@@ -59,7 +59,7 @@ ENV LD_LIBRARY_PATH="${WORKDIR}/miniconda/envs/${CONDA_ENV}/lib:$LD_LIBRARY_PATH
 ENV CONDA_DEFAULT_ENV=${CONDA_ENV}
 
 # Get package
-COPY ../pytorch-lightning pytorch-lightning
+COPY ./ ./pytorch-lightning/
 
 # install dependencies
 RUN \
