@@ -61,7 +61,7 @@ ENV CONDA_DEFAULT_ENV=${CONDA_ENV}
 # install dependencies
 RUN git clone https://github.com/PyTorchLightning/pytorch-lightning.git --single-branch --branch $LIGHTNING_VERSION && \
     cd ./pytorch-lightning && \
-    pip install ".[base, extra]" && \
+    pip install . && \
     cd .. && \
     rm -rf pytorch-lightning
 
