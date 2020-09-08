@@ -41,14 +41,15 @@ ENV PATH="${WORKDIR}/miniconda/bin:$PATH"
 ENV LD_LIBRARY_PATH="${WORKDIR}/miniconda/lib:$LD_LIBRARY_PATH"
 ENV CUDA_TOOLKIT_ROOT_DIR="/usr/local/cuda"
 
-COPY environment.yml environment.yml
+COPY --chown=flash environment.yml environment.yml
 
 # conda init
 RUN conda create -y --name $CONDA_ENV python=$PYTHON_VERSION && \
     conda init bash && \
     # conda install -y python=$PYTHON_VERSION && \
-    conda install pytorch=$PYTORCH_VERSION --channel=pytorch && \
+    conda install pytorch=$PYTORCH_VERSION cudatoolkit=$CUDA_VERSION --channel=pytorch && \
     conda env update --file environment.yml && \
+    rm environment.yml && \
 
 # Disable cache
     conda install "pip>20.1" && \
@@ -64,11 +65,11 @@ COPY --chown=flash ./ ./pytorch-lightning/
 # install dependencies
 RUN \
     if [ -z $LIGHTNING_VERSION ] ; then \
-        pip install ./pytorch-lightning ; \
+        pip install ./pytorch-lightning --upgrade-strategy only-if-needed ; \
         rm -rf pytorch-lightning ; \
     else \
         rm -rf pytorch-lightning ; \
-        pip install git+https://github.com/PyTorchLightning/pytorch-lightning.git@${LIGHTNING_VERSION} ; \
+        pip install git+https://github.com/PyTorchLightning/pytorch-lightning.git@${LIGHTNING_VERSION} --upgrade-strategy only-if-needed ; \
     fi
 
 RUN python --version && \

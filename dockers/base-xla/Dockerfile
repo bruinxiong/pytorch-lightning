@@ -70,13 +70,13 @@ RUN \
     cd pytorch-lightning && \
     # drop Torch
     python -c "fname = \"./requirements/base.txt\" ; lines = [line for line in open(fname).readlines() if not line.startswith(\"torch\")] ; open(fname, \"w\").writelines(lines)" && \
-    pip install --requirement ./requirements/base.txt && \
+    pip install --requirement ./requirements/base.txt --upgrade-strategy only-if-needed && \
     # drop Horovod
     python -c "fname = \"./requirements/extra.txt\" ; lines = [line for line in open(fname).readlines() if not line.startswith(\"horovod\")] ; open(fname, \"w\").writelines(lines)" && \
-    pip install --requirement ./requirements/extra.txt && \
+    pip install --requirement ./requirements/extra.txt --upgrade-strategy only-if-needed && \
     # drop TorchVision
     python -c "fname = \"./requirements/examples.txt\" ; lines = [line for line in open(fname).readlines() if not line.startswith(\"torchvision\")] ; open(fname, \"w\").writelines(lines)" && \
-    pip install --requirement ./requirements/examples.txt && \
+    pip install --requirement ./requirements/examples.txt --upgrade-strategy only-if-needed && \
     cd .. && \
     rm -rf pytorch-lightning && \
     rm -rf /root/.cache
