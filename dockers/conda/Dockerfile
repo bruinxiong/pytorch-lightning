@@ -23,11 +23,11 @@ RUN apt-get update && \
     rm -rf /root/.cache
          
 # add non-root user
-RUN useradd --create-home --shell /bin/bash containeruser
+RUN useradd --create-home --shell /bin/bash flash
 
-USER containeruser
+USER flash
 ENV CONDA_ENV=lightning
-ENV WORKDIR=/home/containeruser
+ENV WORKDIR=/home/flash
 WORKDIR $WORKDIR
 
 # install conda and python
@@ -59,7 +59,7 @@ ENV LD_LIBRARY_PATH="${WORKDIR}/miniconda/envs/${CONDA_ENV}/lib:$LD_LIBRARY_PATH
 ENV CONDA_DEFAULT_ENV=${CONDA_ENV}
 
 # Get package
-COPY ./ ./pytorch-lightning/
+COPY --chown=flash ./ ./pytorch-lightning/
 
 # install dependencies
 RUN \
